@@ -29,10 +29,10 @@ android {
                 "proguard-rules.pro"
             )
 
-            buildConfigField("String", "API_KEY", "\"xxxxxxxxxxx\"")
+            buildConfigField("String", "API_KEY", "\"9b479a639d311b3552d4e6b34d15465b\"")
         }
         debug {
-            buildConfigField("String", "API_KEY", "\"xxxxxxxxxxx\"")
+            buildConfigField("String", "API_KEY", "\"9b479a639d311b3552d4e6b34d15465b\"")
         }
     }
     buildFeatures {
@@ -72,6 +72,9 @@ dependencies {
     implementation(libs.coil.okhttp)
     implementation(libs.play.services.location)
     implementation(libs.accompanist.permissions)
+
+    implementation(libs.datastore.preferences)
+    implementation(libs.serialization.json)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

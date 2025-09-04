@@ -62,10 +62,7 @@ object ForecastScreen {
             TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
         LaunchedEffect(Unit) {
-            // 地域が現在位置もしくは予報が取得されていない場合はリフレッシュ
-            if (uiState.region is Region.Location || uiState.currentForecast == null) {
-                uiState.refresh()
-            }
+            uiState.refresh()
         }
 
         // 状態に合わせてSnackBar表示

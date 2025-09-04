@@ -1,12 +1,14 @@
 package com.sample.myapplication.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.ViewModel
 import com.sample.myapplication.domain.model.Forecast
 import com.sample.myapplication.infra.ForecastRepository
@@ -28,6 +30,14 @@ class MainViewModel @Inject constructor(
         var region by remember { mutableStateOf(SelectRegionScreen.regions.first()) }
         val forecast = remember { mutableStateMapOf<Region, Forecast?>() }
 
+        LaunchedEffect(Unit) {
+            SelectRegionScreen.regions.forEach { region ->
+                forecastRepository.readForecast(region.cityName)?.let {
+                    forecast[region] = it
+                }
+            }
+        }
+
         return remember(status, region, forecast) {
             MainUiState(
                 status = status,
@@ -46,14 +56,20 @@ class MainViewModel @Inject constructor(
                                     longitude = (region as Region.Location).longitude,
                                 )
 
-                                else -> forecastRepository.get5day(
-                                    city = region.cityName,
-                                )
+                                else -> {
+                                    forecastRepository.get5day(city = region.cityName)
+                                }
                             }
 
                             if (response.isSuccessful) {
-                                forecast[region] = response.body()
+                                val body = response.body()!!
+
+                                forecast[region] = body
                                 status = MainUiState.Status.SUCCESS
+
+                                if (region !is Region.Location) {
+                                    forecastRepository.writeForecast(region.cityName, body)
+                                }
                             } else {
                                 status = MainUiState.Status.ERROR
                             }

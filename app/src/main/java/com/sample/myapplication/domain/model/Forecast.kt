@@ -1,7 +1,9 @@
 package com.sample.myapplication.domain.model
 
 import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class Forecast(
     val cod: String,
     val message: Int,
@@ -9,6 +11,7 @@ data class Forecast(
     val list: List<ForecastItem>,
 )
 
+@Serializable
 data class ForecastItem(
     val dt: Long,
     val main: Main,
@@ -23,6 +26,7 @@ data class ForecastItem(
     val dtTxt: String,
 )
 
+@Serializable
 data class Main(
     val temp: Double,
 
@@ -49,6 +53,7 @@ data class Main(
     val tempKf: Double,
 )
 
+@Serializable
 data class Weather(
     val id: Int,
     val main: String,
@@ -56,21 +61,25 @@ data class Weather(
     val icon: String,
 )
 
+@Serializable
 data class Clouds(
     val all: Int,
 )
 
+@Serializable
 data class Wind(
     val speed: Double,
     val deg: Int,
     val gust: Double?,
 )
 
+@Serializable
 data class Rain(
     @SerializedName("3h")
     val h3: Double,
 )
 
+@Serializable
 data class Sys(
     val pod: String,
 )
