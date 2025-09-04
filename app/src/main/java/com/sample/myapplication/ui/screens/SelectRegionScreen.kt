@@ -20,8 +20,13 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
@@ -69,6 +74,8 @@ object SelectRegionScreen {
         val locationPermissionState = rememberPermissionState(
             android.Manifest.permission.ACCESS_FINE_LOCATION
         )
+        var permissionRequested by remember { mutableStateOf(false) }
+
         val context = LocalContext.current
         val fusedLocationClient = remember {
             LocationServices.getFusedLocationProviderClient(context)
@@ -76,6 +83,29 @@ object SelectRegionScreen {
 
         val scrollBehavior =
             TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+
+        val findLocation = {
+            fusedLocationClient.lastLocation.addOnSuccessListener { loc ->
+                if (loc != null) {
+                    onSelectRegion(
+                        Region.Location(
+                            latitude = loc.latitude,
+                            longitude = loc.longitude,
+                        )
+                    )
+                } else {
+                    coroutineScope.launch {
+                        snackBarHostState.showSnackbar(context.getString(R.string.region_location_failed))
+                    }
+                }
+            }
+        }
+
+        LaunchedEffect(locationPermissionState.status) {
+            if (permissionRequested && locationPermissionState.status.isGranted) {
+                findLocation()
+            }
+        }
 
         Scaffold(
             modifier = Modifier
@@ -100,22 +130,10 @@ object SelectRegionScreen {
                         ) {
                             // 現在位置を取得して画面遷移
                             if (locationPermissionState.status.isGranted) {
-                                fusedLocationClient.lastLocation.addOnSuccessListener { loc ->
-                                    if (loc != null) {
-                                        onSelectRegion(
-                                            Region.Location(
-                                                latitude = loc.latitude,
-                                                longitude = loc.longitude,
-                                            )
-                                        )
-                                    } else {
-                                        coroutineScope.launch {
-                                            snackBarHostState.showSnackbar(context.getString(R.string.region_location_failed))
-                                        }
-                                    }
-                                }
+                                findLocation()
                             } else {
                                 locationPermissionState.launchPermissionRequest()
+                                permissionRequested = true
                             }
                         },
                 ) {
