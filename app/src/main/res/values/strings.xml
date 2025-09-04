@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">My Application</string>
+    <string name="select_region_title">地域</string>
+
+    <string name="region_tokyo">東京</string>
+    <string name="region_hyogo">兵庫</string>
+    <string name="region_oita">大分</string>
+    <string name="region_hokkaido">北海道</string>
+    <string name="region_location">現在位置</string>
+    <string name="region_location_failed">位置情報が取得できませんでした</string>
+
+    <string name="forecast_loading">ロード中</string>
+    <string name="forecast_success">成功しました。</string>
+    <string name="forecast_error">通信に失敗しました。</string>
+    <string name="forecast_reload">再取得</string>
+    <string name="forecast_date_format">"MM月 dd日"</string>
+    <string name="forecast_title">%sの天気予報です</string>
+    <string name="forecast_temp">%s℃</string>
+</resources>
